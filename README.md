@@ -28,4 +28,5 @@ When selecting the activity log, the system will show the log of all activity do
 When on the home page, the user, as said before, can ask for help, or they can ask the chatbot questions about cybersecurity and the bot will give them an answer.
 
 Youtube Link ▹:
+
 https://youtu.be/xH4WgOzJwSQ
