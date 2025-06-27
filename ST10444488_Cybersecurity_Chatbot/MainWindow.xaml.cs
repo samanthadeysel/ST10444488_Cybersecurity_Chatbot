@@ -51,7 +51,6 @@ namespace ST10444488_Cybersecurity_Chatbot
 
             AppendMessage($"You: {input}");
 
-            // Step 1 – Check for cybersecurity keyword-based response
             string tip = DetectCyberTip(input);
             if (tip != null)
             {
@@ -60,7 +59,6 @@ namespace ST10444488_Cybersecurity_Chatbot
                 return;
             }
 
-            // Step 2 – Handle intent (like opening pages)
             string intent = DetectUserIntent(input);
             switch (intent)
             {
