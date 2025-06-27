@@ -66,5 +66,10 @@ namespace ST10444488_Cybersecurity_Chatbot.Pages
                 box.Foreground = Brushes.Gray;
             }
         }
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
     }
 }

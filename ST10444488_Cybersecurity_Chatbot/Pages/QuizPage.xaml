@@ -8,14 +8,32 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Cybersecurity Quiz" Margin="10" Height="500" Width="700" Background="#e6f2ff">
     <Border Background="#004080" Margin="10" CornerRadius="10" Padding="15">
-        <StackPanel>
-            <TextBlock x:Name="QuestionText" FontSize="20" FontWeight="Bold" Foreground="White" Margin="5" TextWrapping="Wrap"/>
-            <ListBox x:Name="OptionList" Margin="5" Background="White" BorderBrush="#004080"/>
-            <Button Content="Submit Answer" Click="SubmitAnswer_Click" Margin="5" Background="#66b2ff" Foreground="White"/>
-            <TextBlock x:Name="FeedbackText" FontStyle="Italic" Foreground="White" Margin="5"/>
-            <TextBlock x:Name="ScoreText" FontWeight="Bold" Foreground="#e6f2ff" Margin="5" TextAlignment="Right"/>
+        <Grid>
+            <StackPanel x:Name="WelcomePanel" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Visible">
+                <TextBlock Text="Welcome to the Cybersecurity Quiz!" FontSize="22" FontWeight="Bold" Foreground="White" TextAlignment="Center" Margin="0,0,0,10"/>
 
-            <Button x:Name="CloseButton" Content="Close" Click="CloseButton_Click" Width="100" HorizontalAlignment="Right" Margin="5" Background="#66B2FF" Foreground="White" Visibility="Collapsed"/>
-        </StackPanel>
+                <TextBlock Text="Test your knowledge and boost your awareness of online threats." FontSize="14" Foreground="White" TextAlignment="Center" Margin="0,0,0,20"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <Button Content="Start Quiz" Click="StartQuiz_Click" Width="120" Background="#66B2FF" Foreground="White" FontWeight="SemiBold"/>
+
+                    <Button Content="Close" Click="CloseButton_Click" Width="100" Background="#888" Foreground="White" FontWeight="SemiBold"/>
+                </StackPanel>
+            </StackPanel>
+            
+            <StackPanel x:Name="QuizContent" Visibility="Collapsed">
+                <TextBlock x:Name="QuestionText" FontSize="20" FontWeight="Bold" Foreground="White"  Margin="5" TextWrapping="Wrap"/>
+
+                <ListBox x:Name="OptionList" Margin="5" Background="White" BorderBrush="#004080"/>
+
+                <Button x:Name="SubmitButton" Content="Submit Answer" Click="SubmitAnswer_Click" Margin="5" Background="#66b2ff" Foreground="White"/>
+                <Button x:Name="NextButton" Content="Next Question" Click="NextButton_Click" Margin="5" Background="#66b2ff" Foreground="White" Visibility="Collapsed"/>
+                <TextBlock x:Name="FeedbackText" FontStyle="Italic" Foreground="White" Margin="5"/>
+
+                <TextBlock x:Name="ScoreText" FontWeight="Bold" Foreground="#e6f2ff" Margin="5" TextAlignment="Right"/>
+
+                <Button x:Name="CloseButton" Content="Close" Click="CloseButton_Click" Width="100" HorizontalAlignment="Right" Margin="5" Background="#66B2FF" Foreground="White" Visibility="Collapsed"/>
+            </StackPanel>
+        </Grid>
     </Border>
 </Window>

@@ -23,6 +23,21 @@ namespace ST10444488_Cybersecurity_Chatbot
     {
         private List<string> activityLog = new List<string>();
         private List<string> knownTasks = new List<string>();
+        private readonly Dictionary<string, string> responses = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            {"help", "You can ask about: 'Passwords', '2 Factor Authentication', 'Updates', 'Phishing', 'Virtual Private Networks', 'Clicking'."},
+            {"password", "Use strong passwords (longer than 8 characters) and never reuse old ones."},
+            {"2 factor authentication", "2FA adds a second layer of login security — like a code, fingerprint, or app prompt."},
+            {"updates", "Install updates regularly. They patch security flaws hackers could exploit."},
+            {"phishing", "Don’t click suspicious links or open attachments from unknown senders."},
+            {"virtual private networks", "VPNs protect your data on public Wi-Fi by encrypting your traffic."},
+            {"clicking", "Be cautious with unknown ads or links. Hover before you click."},
+            {"worried", "It's perfectly okay to feel that way. Let's tackle one topic at a time."},
+            {"frustrated", "Cybersecurity can be frustrating, but small steps make a big impact."},
+            {"how are you", "I'm here and ready to help keep you cyber-safe!"}
+        };
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,29 +46,81 @@ namespace ST10444488_Cybersecurity_Chatbot
 
         private void Send_Click(object sender, RoutedEventArgs e)
         {
-            string input = UserInput.Text.ToLower();
+            string input = UserInput.Text.Trim();
             if (string.IsNullOrWhiteSpace(input)) return;
 
-            AppendMessage($"You: {UserInput.Text}");
+            AppendMessage($"You: {input}");
 
-            if (input.Contains("task") || input.Contains("remind"))
+            // Step 1 – Check for cybersecurity keyword-based response
+            string tip = DetectCyberTip(input);
+            if (tip != null)
             {
-                new TaskPage(knownTasks, activityLog).Show();
+                AppendMessage("Chatbot: " + tip);
+                UserInput.Clear();
+                return;
             }
-            else if (input.Contains("quiz") || input.Contains("questions"))
+
+            // Step 2 – Handle intent (like opening pages)
+            string intent = DetectUserIntent(input);
+            switch (intent)
             {
-                new QuizPage(activityLog).Show();
-            }
-            else if (input.Contains("log") || input.Contains("history"))
-            {
-                new ActivityLogPage(activityLog, knownTasks).Show();
-            }
-            else
-            {
-                AppendMessage("Chatbot: Ask me about passwords, phishing, VPNs, reminders, or quizzes");
+                case "add_task":
+                    string cleanedTask = char.ToUpper(input[0]) + input.Substring(1);
+                    knownTasks.Add(cleanedTask);
+                    activityLog.Add($"Auto-created task: \"{cleanedTask}\"");
+                    new TaskPage(knownTasks, activityLog).Show();
+                    break;
+
+                case "start_quiz":
+                    activityLog.Add("Cybersecurity quiz started via chat.");
+                    new QuizPage(activityLog).Show();
+                    break;
+
+                case "open_log":
+                    activityLog.Add("Opened activity log from chat.");
+                    new ActivityLogPage(activityLog, knownTasks).Show();
+                    break;
+
+                default:
+                    AppendMessage("Chatbot: Ask me about reminders, quizzes, or activity logs — or try topics like passwords, phishing, or VPNs.");
+                    break;
             }
 
             UserInput.Clear();
+        }
+
+        private string DetectCyberTip(string input)
+        {
+            input = input.ToLower();
+            foreach (var keyword in responses.Keys)
+            {
+                if (input.Contains(keyword.ToLower()))
+                    return responses[keyword];
+            }
+            return null;
+        }
+
+        private string DetectUserIntent(string input)
+        {
+            input = input.ToLower();
+
+            var keywordMap = new Dictionary<string[], string>
+            {
+                { new[] { "remind", "create a task", "add task", "set a reminder" }, "add_task" },
+                { new[] { "quiz", "take quiz", "start test", "cybersecurity questions" }, "start_quiz" },
+                { new[] { "history", "activity", "log", "chat history" }, "open_log" }
+            };
+
+            foreach (var keywords in keywordMap.Keys)
+            {
+                foreach (var keyword in keywords)
+                {
+                    if (input.Contains(keyword))
+                        return keywordMap[keywords];
+                }
+            }
+
+            return "unknown";
         }
 
         private void AppendMessage(string msg)
@@ -71,15 +138,15 @@ namespace ST10444488_Cybersecurity_Chatbot
         {
             new TaskPage(knownTasks, activityLog).Show();
         }
+
         private void OpenQuiz(object sender, RoutedEventArgs e)
         {
             new QuizPage(activityLog).Show();
         }
+
         private void OpenActivity(object sender, RoutedEventArgs e)
         {
             new ActivityLogPage(activityLog, knownTasks).Show();
         }
-
-
     }
 }

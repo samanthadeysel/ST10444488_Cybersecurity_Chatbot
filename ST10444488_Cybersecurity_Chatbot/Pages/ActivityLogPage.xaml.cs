@@ -22,6 +22,8 @@ namespace ST10444488_Cybersecurity_Chatbot.Pages
     {
         private readonly List<string> activityLog;
         private readonly List<string> tasks;
+        private int currentPage = 0;
+        private int pageSize = 10;
 
         public ActivityLogPage(List<string> activityLog, List<string> tasks)
         {
@@ -34,66 +36,94 @@ namespace ST10444488_Cybersecurity_Chatbot.Pages
         private void RefreshLog()
         {
             LogList.Items.Clear();
+            var pagedItems = activityLog
+                .Skip(currentPage * pageSize)
+                .Take(pageSize)
+                .ToList();
 
-            var recentItems = activityLog.Skip(Math.Max(0, activityLog.Count - 10)).ToList();
-
-            if (recentItems.Count == 0)
+            foreach (var entry in pagedItems)
             {
-                LogList.Items.Add("No recent activity.");
-                return;
+                var textBlock = new TextBlock
+                {
+                    Text = entry,
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(5)
+                };
+                if (entry.Contains("✅"))
+                {
+                    textBlock.TextDecorations = TextDecorations.Strikethrough;
+                    textBlock.Foreground = Brushes.Gray;
+                }
+                LogList.Items.Add(textBlock);
             }
+            ShowMoreButton.Visibility = (activityLog.Count > (currentPage + 1) * pageSize)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
 
-            foreach (var entry in recentItems)
-                LogList.Items.Add(entry);
+        private void ShowMore_Click(object sender, RoutedEventArgs e)
+        {
+            currentPage++;
+            RefreshLog();
         }
 
         private void MarkComplete_Click(object sender, RoutedEventArgs e)
         {
-            if (LogList.SelectedItem is string selected && selected.StartsWith("Task added: "))
+            if (LogList.SelectedItem is TextBlock selected && selected.Text.ToLower().Contains("task"))
             {
-                string taskTitle = ExtractTaskTitle(selected);
-                int index = tasks.FindIndex(t => t.StartsWith(taskTitle) && !t.Contains("✅"));
+                string taskTitle = ExtractTaskTitle(selected.Text);
 
-                if (index >= 0)
+                int taskIndex = tasks.FindIndex(t =>
+                    t.Equals(taskTitle, StringComparison.OrdinalIgnoreCase) &&
+                    !t.StartsWith("✅"));
+                if (taskIndex >= 0)
                 {
-                    tasks[index] += "Completed";
-                    activityLog.Add($"Marked complete: {taskTitle}");
-                    MessageBox.Show($"Marked '{taskTitle}' as complete.");
-                }
-                else
-                {
-                    MessageBox.Show("That task is already marked complete or no longer exists.");
+                    tasks[taskIndex] = "✅ " + taskTitle;
+
+                    int logIndex = activityLog.FindIndex(l =>
+                        l.Contains(taskTitle) && !l.Contains("✅"));
+                    if (logIndex >= 0)
+                    {
+                        activityLog[logIndex] = "✅ " + activityLog[logIndex];
+                    }
+                    RefreshLog();
                 }
             }
-            RefreshLog();
         }
 
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
         {
-            if (LogList.SelectedItem is string selected && selected.StartsWith("Task added: "))
+            if (LogList.SelectedItem is TextBlock selected && selected.Text.ToLower().Contains("task"))
             {
-                string taskTitle = ExtractTaskTitle(selected);
-                int index = tasks.FindIndex(t => t.StartsWith(taskTitle));
+                string taskTitle = ExtractTaskTitle(selected.Text);
 
-                if (index >= 0)
+                int taskIndex = tasks.FindIndex(t =>
+                    t.Equals(taskTitle, StringComparison.OrdinalIgnoreCase) ||
+                    t.Contains(taskTitle));
+                if (taskIndex >= 0)
                 {
-                    tasks.RemoveAt(index);
-                    activityLog.Add($"Deleted task: {taskTitle}");
-                    MessageBox.Show($"🗑️ Deleted '{taskTitle}' from your tasks.");
+                    tasks.RemoveAt(taskIndex);
                 }
-                else
+                int logIndex = activityLog.FindIndex(l => l == selected.Text || l.Contains(taskTitle));
+                if (logIndex >= 0)
                 {
-                    MessageBox.Show("Could not find the task to delete.");
+                    activityLog.RemoveAt(logIndex);
                 }
+                RefreshLog();
             }
-            RefreshLog();
         }
 
         private string ExtractTaskTitle(string logEntry)
         {
-            string withoutPrefix = logEntry.Replace("Task added: ", "");
-            string titleOnly = withoutPrefix.Split('(')[0].Trim(); // in case of "(Reminder...)" or "(Completed)"
-            return titleOnly;
+            int firstQuote = logEntry.IndexOf('"');
+            int lastQuote = logEntry.LastIndexOf('"');
+
+            if (firstQuote >= 0 && lastQuote > firstQuote)
+            {
+                return logEntry.Substring(firstQuote + 1, lastQuote - firstQuote - 1).Trim();
+            }
+            int colon = logEntry.IndexOf(':');
+            return colon >= 0 ? logEntry.Substring(colon + 1).Trim() : logEntry.Trim();
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

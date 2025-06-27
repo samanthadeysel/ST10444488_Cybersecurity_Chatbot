@@ -9,14 +9,16 @@
       Title="Activity Log" Height="400" Width="600" Background="#e6f2ff">
     <Border Background="#006080" CornerRadius="10" Padding="15" Margin="10">
         <StackPanel>
-            <TextBlock Text="Recent Activity Log" FontSize="20" FontWeight="Bold" Foreground="White" Margin="5"/>
-            <ListBox x:Name="LogList" Background="White" BorderBrush="#004080" Foreground="#004080" FontSize="14" Margin="5" Height="280" SelectionMode="Single"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <DockPanel Margin="0,0,0,10">
+                <TextBlock Text="Recent Activity Log" FontSize="20" FontWeight="Bold" Foreground="White" Margin="5"/>
+               <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Mark as Complete" Click="MarkComplete_Click" Margin="5" Background="#66B2FF" Foreground="White"/>
-                <Button Content="Delete Task" Click="DeleteTask_Click" Margin="5" Background="#CC3300" Foreground="White"/>
-            </StackPanel>
-            
-            <Button Content="Close" Click="Close_Click" HorizontalAlignment="Right" Width="80" Background="#66B2FF" Foreground="White" Margin="5"/>
+                <Button Content="Delete Task" Click="DeleteTask_Click" Margin="5" Background="#66B2FF" Foreground="White"/>
+                <Button Content="Show More" Click="ShowMore_Click" x:Name="ShowMoreButton" Margin="5" Background="#66B2FF" Foreground="White" FontWeight="SemiBold"/>
+                <Button Content="Close" Click="Close_Click" HorizontalAlignment="Right" Margin="5" Background="#66B2FF" Foreground="White"/>
+               </StackPanel>
+            </DockPanel>
+                <ListBox x:Name="LogList" Background="White" BorderBrush="#004080" Foreground="#004080" FontSize="14" Margin="5" Height="280" SelectionMode="Single"/>
         </StackPanel>
     </Border>
 </Window>
