@@ -25,6 +25,6 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
     - name: Build with MSBuild
-      run: msbuild ST10444488_Cybersecurity_Chatbot.sln /p:Configuration=Release /p:Platform="x64"
+      run: msbuild ST10444488_Cybersecurity_Chatbot.sln /p:Configuration=Release /p:Platform="Any CPU"
     - name: Test
       run: dotnet test --no-build --verbosity normal
