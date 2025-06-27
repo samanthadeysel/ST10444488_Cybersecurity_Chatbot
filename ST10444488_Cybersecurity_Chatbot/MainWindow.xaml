@@ -5,8 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ST10444488_Cybersecurity_Chatbot"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="450" Width="800" Background="#e6f2ff">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="#004080">
+            <MenuItem Header="Navigate" Foreground="White">
+                <MenuItem Header="Tasks" Click="OpenTasks"/>
+                <MenuItem Header="Quiz" Click="OpenQuiz"/>
+                <MenuItem Header="Activity Log" Click="OpenActivity"/>
+            </MenuItem>
+        </Menu>
+
+        <StackPanel Margin="10">
+            <TextBlock Text="Cybersecurity Chatbot" FontSize="26" FontWeight="Bold" Foreground="#004080" Margin="10"/>
+            <ScrollViewer Height="350">
+                <ItemsControl x:Name="ChatHistory"/>
+            </ScrollViewer>
+
+            <DockPanel Margin="10">
+                <TextBox x:Name="UserInput" Width="600" Height="30" Margin="0,0,10,0"/>
+                <Button Content="Send" Width="100" Click="Send_Click" Background="#66b2ff" Foreground="White"/>
+            </DockPanel>
+        </StackPanel>
+    </DockPanel>
 </Window>
